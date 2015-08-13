@@ -1,0 +1,119 @@
+***** 第三章练习 *****
+
+/* * * * * * * * * *
+1. 编写一段代码，将a设置为一个n个随机整数的数组，要求随机数结余0（包含）和n（不包含）之间。
+ * * * * * * * * * */
+def makeArr(n:Int) = {
+	val a = new Array[Int](n)
+	for(i <- a) yield scala.util.Random.nextInt(n)
+}
+
+makeArr(10).foreach(println)
+
+/* * * * * * * * * *
+2. 编写一个循环，将整数数组中相邻的元素互换。例如，Array(1,2,3,4,5)经过互换后得到Array(2,1,4,3,5)
+ * * * * * * * * * */
+def exchange(arr:Array[Int]) = {
+	for(i <- 0 until (arr.length-1, 2)){
+		val t = arr(i)
+		arr(i) = arr(i+1)
+		arr(i+1) = t
+	}
+}
+
+val a = Array(1,2,3,4,5)
+exchange(a)
+a.foreach(println)
+
+/* * * * * * * * * *
+3. 重复前一个练习，不过这一次生成一个新的值交换过的数组。用for...yield
+(note: 习题3是返回一个新数组；习题2是直接修改原数组）
+ * * * * * * * * * */
+def exchange(arr:Array[Int]) = {
+	for(i <- 0 until arr.length) yield {
+		if(i < (arr.length-1) && i%2 == 0) arr(i+1)
+		else if(i < (arr.length-1) && i%2 == 1) arr(i-1)
+		else arr(i)
+	}
+}
+
+val a = Array(1,2,3,4,5)
+val b = exchange(a)
+b.foreach(println)
+
+/* * * * * * * * * *
+4. 给定一个整数数组，产出一个新的数组，包含原数组中的所有正值，以原有顺序排列；之后的元素是所有零或负值，按原有顺序排列
+ * * * * * * * * * */
+def sigNumArr(arr:Array[Int]) = {
+	val buf = new scala.collection.mutable.ArrayBuffer[Int]()
+	buf ++= (for(i <- arr if i>0) yield i)
+	buf ++= (for(i <- arr if i==0) yield i)
+	buf ++= (for(i <- arr if i<0) yield i)
+
+	buf.toArray
+}
+
+val a = Array(1, -2, 0, -3, 0, 4, -2, 5, -1)
+val b = sigNumArr(a)
+b.foreach(println)
+
+
+/* * * * * * * * * *
+5. 如何计算Array[Double]的平均值
+ * * * * * * * * * */
+def mean(arr:Array[Double]) = {
+	arr.sum / arr.length
+}
+
+val a = Array(1.0, -2, 0, -3, 0, 4, -2, 5, -1)
+mean(a)
+
+/* * * * * * * * * *
+6. 如何重新组织Array[Int]的元素将它们以反序排列？对于ArrayBuffer[Int]你又会怎么做呢？
+ * * * * * * * * * */
+// Array的反转
+def revertArr(arr:Array[Int]) = {
+	for(i <- 0 until (arr. length / 2)) {
+		val t = arr(i)
+		arr(i) = arr(arr.length-1-i)
+		arr(arr.length-1-i) = t
+	}
+}
+val a = Array(1, -2, 0, -3, 0, 4, -2, 5, -1)
+revertArr(a)
+a
+
+// ArrayBuffer的反转，直接调用reverse函数
+import scala.collection.mutable.ArrayBuffer
+def revertBuf(arr:ArrayBuffer[Int]) = {
+	arr.reverse
+}
+val b = ArrayBuffer[Int]()
+b ++= a
+revertBuf(b)
+
+
+/* * * * * * * * * *
+7. 编写一段代码，产出数组中的所有值，去掉重复项。
+ * * * * * * * * * */
+def removeDuplicate(arr:Array[Int]) = {
+	val b = scala.collection.mutable.ArrayBuffer[Int]()
+	b ++= arr.distinct
+	b.toArray
+}
+
+val a = Array(1,1,2,2,2,3,4,5,5)
+val b = removeDuplicate(a)
+
+
+/* * * * * * * * * *
+8. 重新编写3.4节结尾的示例。收集负值元素的下标，反序，去掉最后一个下标，然后对每一个下标调用a.remove(i)。比较这样的效率和3.4节另外两种方法的效率。
+ * * * * * * * * * */
+
+/* * * * * * * * * *
+9. 创建一个由java.util.TimeZone.getAvailableIDs返回的时区集合，判断条件是它们在美洲。去掉”America/“前缀并排序
+ * * * * * * * * * */
+val tArr = java.util.TimeZone.getAvailableIDs
+val t = (for (s <- tArr if s.startsWith("America")) yield s.drop("America/".length) )
+scala.util.Sorting.quichSort(t)
+
