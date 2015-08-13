@@ -1,0 +1,112 @@
+***** 第一章练习 *****
+
+首先，在命令行输入scala进入REPL模式。信息如下：
+fengfu-chris@09:32:56 $ scala
+Welcome to Scala version 2.11.7 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_20).
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> 
+
+/* * * * * * * * * *
+1. 在Scala REPL中键入3，然后按Tab键。有哪些方法可以被应用？
+ * * * * * * * * * */
+scala> 3.
+%   +   >    >>>            isInstanceOf   toDouble   toLong     unary_+   |   
+&   -   >=   ^              toByte         toFloat    toShort    unary_-       
+*   /   >>   asInstanceOf   toChar         toInt      toString   unary_~   
+
+/* * * * * * * * * *
+2. 在Scala REPL中，计算3的平方根，然后再对该值求平方。现在，这个结果与3相差多少？
+ * * * * * * * * * */
+scala> import scala.math.sqrt
+import scala.math.sqrt
+
+scala> sqrt(3)
+res1: Double = 1.7320508075688772
+
+scala> res1 * res1
+res2: Double = 2.9999999999999996
+
+scala> 3 - res2
+res3: Double = 4.440892098500626E-16 
+
+/* * * * * * * * * *
+3. res变量是var还是val？
+ * * * * * * * * * */
+是val。只需要对res赋值看能否成功即可。
+scala> 1
+res1: Int = 1
+
+scala> res1 = 0
+<console>:12: error: reassignment to val
+       res1 = 0
+            ^
+
+/* * * * * * * * * *
+4. Scala允许你用数字去乘以字符串——去REPL中试一下”crazy” * 3。这个操作做什么？在Scaladoc中如何查找这个操作？
+ * * * * * * * * * */
+scala> "crazy" * 3
+res1: String = crazycrazycrazy
+
+(a). 从结果可见字符串的 * 运算相当于复制运算。 * 3 = 复制三次
+(b). 从代码可以推断, ”*“ 是 ”crazy"这个字符串所具有的方法，但是Java中的String没这个方法。因此，该方法在StringOps中，在Scaladoc中搜索”StringOps“，然后搜索”*”即可找到
+
+’/* * * * * * * * * *
+5. 10 max 2 的意义是什么？ max 方法定义在哪个类中？
+ * * * * * * * * * */
+(a). 根据scala中一切事物皆对象的原则，10 max 2 相当于 (10).max(2) 
+(b). 由于10是Int类型，所以max方法定义在Scala.Int类中。（如果Int类中没有，则可能是在RichInt类中）
+
+/* * * * * * * * * *
+6. 用BigInt计算2的1024次方。
+ * * * * * * * * * */
+scala> import scala.math.pow
+import scala.math.pow
+
+scala> BigInt(2).pow(1024)
+res13: scala.math.BigInt = 179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137216
+
+/* * * * * * * * * *
+7. 为了在使用probablePrime(100,Random)获取随机数时不在probablePrime和Random之前使用任何限定符，你需要引入什么？
+ * * * * * * * * * */
+Random在scala.util中，而probablePrime是BigInt中的方法。所以，
+import scala.math.BigInt.probablePrime
+import scala.util.Random
+
+/* * * * * * * * * *
+8. 创建随机文件的方式之一是生成一个随机的BigInt，然后将它转换成三十六进制，输出类似”qsnvbevtomcj38o06kul”这样字样的字符串。查阅Scaladoc，找到在Scala中实现该逻辑的方法。
+ * * * * * * * * * */
+scala> scala.math.BigInt(scala.util.Random.nextInt).toString(36)
+res1: String = b5htta
+
+/* * * * * * * * * *
+9. 在Scala中如何获取字符串的首字符和尾字符？
+ * * * * * * * * * */
+val s = "Hello, Scala!"
+
+// 首字符
+s.head
+s(0)
+s.take(1)
+
+// 尾字符
+s.last
+s.takeRight(1)
+s.reverse(0)
+s(s.length-1)
+
+/* * * * * * * * * *
+10. take, drop, takeRight, dropRight 这些字符串函数是做什么用的？和substring相比，他们的优缺点有哪些？
+ * * * * * * * * * */
+def take(n: Int): String  // Selects first n elements.
+def takeRight(n: Int): String // Selects last n elements.
+def drop(n: Int): String // Selects all elements except first n ones.
+def dropRight(n: Int): String // Selects all elements except last n ones.
+优点：简洁
+缺点：单方向。如果需要取中间的字串，则需要同时调用多个函数；或者用substring
+
+
+
+
+
