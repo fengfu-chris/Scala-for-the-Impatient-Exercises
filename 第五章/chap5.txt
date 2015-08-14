@@ -1,0 +1,116 @@
+***** 第五章练习 *****
+
+这一章主要是一些类的练习。要测试类的话可以写一个单例对象，中间定义main方法，模板如下：
+object Test
+{
+	def main(args:Array[String]){
+		// class testing
+	}
+
+	class TestClass {
+		// class definition
+	}
+}
+
+
+/* * * * * * * * * *
+1. 改进5.1节的Counter类,让它不要在Int.MaxValue时变成负数
+ * * * * * * * * * */
+class Count {
+	private var value = 0
+	
+	def increment() { value = if(value < Int.MaxValue) value+1 else value }
+	def current = value
+}
+
+
+/* * * * * * * * * *
+2. 编写一个BankAccount类，加入deposit和withdraw方法，和一个只读的balance属性
+ * * * * * * * * * */
+class BankAccount(val balance:Int = 0){
+	def deposit(){}
+	def withdraw(){}
+}
+
+
+/* * * * * * * * * *
+3. 编写一个Time类，加入只读属性hours和minutes，和一个检查某一时刻是否早于另一时刻的方法 before(other:Time):Boolean。Time对象应该以new Time(hrs,min)方式构建。其中hrs以军用时间格式呈现(介于0和23之间)
+ * * * * * * * * * */
+class Time(val hours:Int, val minutes:Int){
+	def before(other:Time):Boolean = {
+		hours < other.hours || (hours == others.hours && minutes < others.minutes)
+	}
+
+	def show():String = {
+		hours + " : " + minutes
+	}
+}
+
+
+/* * * * * * * * * *
+4. 重新实现前一个类中的Time类，将内部呈现改成午夜起的分钟数(介于0到24*60-1之间)。不要改变公有接口。也就是说，客户端代码不应因你的修改而受影响 
+ * * * * * * * * * */
+class Time(val hours:Int, val minutes:Int){
+	def before(other:Time):Boolean = {
+		hours < other.hours || (hours == others.hours && minutes < others.minutes)
+	}
+
+	def show():String = {
+		hours * 60 + minutes
+	}
+}
+
+
+/* * * * * * * * * *
+5. 创建一个Student类，加入可读写的JavaBeans属性name(类型为String)和id(类型为Long)。有哪些方法被生产？(用javap查看。)你可以在Scala中调用JavaBeans的getter和setter方法吗？应该这样做吗？
+ * * * * * * * * * */
+
+/* * * * * * * * * *
+6. 在5.2节的Person类中提供一个主构造器,将负年龄转换为0 
+ * * * * * * * * * */
+class Person(var age:Int = 0){
+	age = if(age < 0) 0 else age
+}
+
+
+/* * * * * * * * * *
+7. 编写一个Person类，其主构造器接受一个字符串，该字符串包含名字，空格和姓，如new Person("Fred Smith")。提供只读属性firstName和lastName。主构造器参数应该是var,val还是普通参数？为什么？
+ * * * * * * * * * */
+class Person(val name:String){
+	val firstName:String = {val tokens = name.split("\\s+"); tokens.head }
+	val lastName:String = {val tokens = name.split("\\s+"); tokens.last }
+}
+
+应该设为val。如果为var，则对应的此字符串有get和set方法，而Person中的firstName和lastName为只读的,
+所以不能重复赋值。如果为var则会重复赋值而报错
+
+/* * * * * * * * * *
+8. 创建一个Car类，以只读属性对应制造商，型号名称，型号年份以及一个可读写的属性用于车牌。提供四组构造器。每个构造器fc都要求制造商和型号为必填。型号年份和车牌可选，如果未填，则型号年份为-1，车牌为空串。你会选
+择哪一个作为你的主构造器？为什么？
+ * * * * * * * * * */
+class Car(val maker:String, val typeName:String, val year:Int = -1, var carLic:String = ""){
+	def this(mk:String, tname:String) { this(mk, tname, -1, "") }
+	def this(mk:String, tname:String, y:Int) { this(mk, tname, y, "") }
+	def this(mk:String, tname:String, c:String) { this(mk, tname, -1, c) }
+}
+
+直接用四个参数的主构造器会非常省代码！！！其他都需要多些几行~
+
+/* * * * * * * * * *
+9. 在Java,C#或C++重做前一个练习。Scala相比之下精简多少？
+ * * * * * * * * * */
+
+/* * * * * * * * * *
+10. 考虑如下的类    
+class Employ(val name:String, var salary:Double){      
+	def this(){this("John Q. Public",0.0)}  
+}
+重写该类,使用显示的字段定义，和一个缺省主构造器。你更倾向于使用哪种形式？为什么？
+ * * * * * * * * * */
+class Employ(){
+	val name:String = "John Q. Public"
+	val salary:Double = 0.0
+}
+
+第二种更Java/C++风格，第一种更Scala风格。从Scalable的角度来说的话，第一种更容易拓展，代码量更少。所以，值得转换思路。
+
