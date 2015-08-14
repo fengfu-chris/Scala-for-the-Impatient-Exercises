@@ -1,0 +1,140 @@
+***** 第四章练习 *****
+
+/* * * * * * * * * *
+1. 设置一个映射，其中包含你想要的一些装备，以及它们的价格。然后构建另外一个映射，采用同一组键，但在价格上打九折。
+ * * * * * * * * * */
+val map = Map("cup" -> 10, "book" -> 30, "Macbook Pro" -> 99800, "iPad" -> 3200)
+for((k,v) <- map) yield (k, v * 0.9)
+
+/* * * * * * * * * *
+2. 编写一段程序，从文件中读取单词。用一个可变映射来清点每个单词出现的频率。读取这些单词的操作可以使用java.util.Scanner:  
+val in = new java.util.Scanner(new java.io.File("myfile.txt")) 
+while(in.hasNext()) 处理 in.next() 或者翻到第9章看看更Scala的做法。 
+最后，打印出所有单词和它们出现的次数。
+ * * * * * * * * * */
+首先创建"myfile.txt",文本内容如下：
+ he hello hello he h world h he world wo 
+
+然后按照第九章的文件处理来做：
+import scala.io.Source
+import scala.collection.mutable.HashMap
+
+val source = Source.fromFile("myfile.txt").mkString // 将文件读取为字符串
+val tokens = source.split("\\s+") // 用正则表达式来分割字符（这里是空格、tab键、分行等）
+val map = new HashMap[String,Int]
+
+for (key <- tokens) {
+	map(key) = map.getOrElse(key, 0) + 1 // 用 getOrElse 来加入新的元素或加1
+}
+
+println(map.mkString(",")) // 用","来作为打印map中元素的分隔符
+
+/* * * * * * * * * *
+3. 重复前一个练习，这次用不可变的映射
+ * * * * * * * * * */
+import scala.io.Source
+
+val source = Source.fromFile("myfile.txt").mkString
+val tokens = source.split("\\s+")
+var map = Map[String,Int]() // 利用var变量来更新不可变映射
+
+for (key <- tokens) {
+	map += (key -> (map.getOrElse(key, 0) + 1)) // 用 += 来获取包含新更新的“新映射”
+}
+
+println(map.mkString(","))
+
+/* * * * * * * * * *
+4. 重复前一个练习，这次使用已排序的映射，以便单词可以按顺序打印出来
+ * * * * * * * * * */
+import scala.io.Source
+import scala.collection.SortedMap
+
+val source = Source.fromFile("myfile.txt").mkString
+val tokens = source.split("\\s+")
+var map = SortedMap[String,Int]()
+
+for (key <- tokens) {
+	map += (key -> (map.getOrElse(key, 0) + 1)) 
+}
+
+println(map.mkString(","))
+
+
+/* * * * * * * * * *
+5. 重复前一个练习，这次使用java.util.TreeMap并使之适用于Scala API
+ * * * * * * * * * */
+import scala.io.Source  
+import scala.collection.mutable.Map  
+import scala.collection.JavaConversions.mapAsScalaMap 
+import java.util.TreeMap   
+
+val source = Source.fromFile("myfile.txt").mkString   
+val tokens = source.split("\\s+")   
+val map:Map[String,Int] = new TreeMap[String,Int] // 类型转换   
+for(key <- tokens){    
+	map(key) = map.getOrElse(key,0) + 1 
+}   
+println(map.mkString(",")) 
+
+/* * * * * * * * * *
+6. 定义一个链式哈希映射,将"Monday"映射到 java.util.Calendar.MONDAY,依次类推加入其他日期。展示元素是以插入的顺序被访问的
+ * * * * * * * * * */
+import scala.collection.mutable.LinkedHashMap // 链式哈希映射
+import java.util.Calendar
+
+val map = new LinkedHashMap[String,Int]   
+map += ("Monday" -> Calendar.MONDAY)  // 2
+map += ("Tuesday" -> Calendar.TUESDAY)  // 3
+map += ("Wednesday" -> Calendar.WEDNESDAY) 
+map += ("Thursday" -> Calendar.THURSDAY) 
+map += ("Friday" -> Calendar.FRIDAY) 
+map += ("Saturday" -> Calendar.SATURDAY) // 7
+map += ("Sunday" -> Calendar.SUNDAY) // 1
+
+println(map.mkString(","))
+
+
+/* * * * * * * * * *
+7. 打印出所有Java系统属性的表格
+ * * * * * * * * * */
+import scala.collection.JavaConversions.propertiesAsScalaMap   
+
+val props:scala.collection.Map[String,String] = System.getProperties()   
+val keys = props.keySet   
+val keyLengths = for( key <- keys ) yield key.length   
+val maxKeyLength = keyLengths.max   
+
+for(key <- keys) {   
+	print(key)    
+	print(" " * (maxKeyLength - key.length))   
+	print(" | ")    
+	println(props(key)) 
+}
+
+
+/* * * * * * * * * *
+8. 编写一个函数minmax(values:Array[Int]),返回数组中最小值和最大值的对偶
+ * * * * * * * * * */
+def minmax(values:Array[Int]) = {
+	(values.min, values.max)
+}
+
+
+/* * * * * * * * * *
+9. 编写一个函数Iteqgt(values:Array[int],v:Int),返回数组中小于v,等于v和大于v的数量，要求三个值一起返回
+ * * * * * * * * * */
+def Iteqgt(values:Array[Int], v:Int) = {
+	(values.count(_ < v), values.count(_ == v), values.count(_ > v))
+}
+
+val values = Array(-5, -3, -1, 0, 0, 1, 2, 3, 4, 5)
+val v = 0
+Iteqgt(values, v)
+
+
+/* * * * * * * * * *
+10. 当你将两个字符串拉链在一起，比如"Hello".zip("World")，会是什么结果？想出一个讲得通的用例
+ * * * * * * * * * */
+scala> "Hello".zip("World")
+res1: scala.collection.immutable.IndexedSeq[(Char, Char)] = Vector((H,W), (e,o), (l,r), (l,l), (o,d))
